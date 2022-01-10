@@ -30,7 +30,7 @@ spec:
             - name: AZP_POOL
               value: vCosmos Runner
             - name: AZP_TOKEN
-              value: $(AZURE_TOKEN)
+              value: "$(AZURE_TOKEN)"
             - name: AZP_URL
               value: https://dev.azure.com/hp-csrd-validation
           volumeMounts:
