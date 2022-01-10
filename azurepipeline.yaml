@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: azure-pipeline-agent
+  name: azure-pipeline-agent
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: azure-pipeline-agent
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: azure-pipeline-agent
+    spec:
+      containers:
+        - name: azure-pipeline-agent
+          image: alexhsieh8888/azure-agent:ubuntu-18.04
+          imagePullPolicy: IfNotPresent
+          resources: {}
+          env:
+            - name: UUID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.uid
+            - name: AZP_AGENT_NAME
+              value: "devops-$(INSTABCE_ID)-$(UUID)"
+            - name: AZP_POOL
+              value: vCosmos Runner
+            - name: AZP_TOKEN
+              value: $(AZURE_TOKEN)
+            - name: AZP_URL
+              value: https://dev.azure.com/hp-csrd-validation
+          volumeMounts:
+            - mountPath: /var/run/docker.sock
+              name: docker-volume
+      restartPolicy: Always
+      volumes:
+        - name: docker-volume
+          hostPath:
+            path: /var/run/docker.sock
+      tolerations:
+        - key: "key"
+          operator: "Exists"
+          effect: "NoSchedule"
